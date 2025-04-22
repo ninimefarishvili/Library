@@ -1,7 +1,11 @@
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
-from ninja import NinjaAPI  
-from books.api import router as BookRouter
+from ninja import NinjaAPI
+
+from apps.book.api import router as BookRouter
+from apps.book.api import auth_router as AuthRouter
+
+
 
 def superuser_required(
     view_func=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url="/"
@@ -16,13 +20,14 @@ def superuser_required(
     return actual_decorator
 
 
-
 api = NinjaAPI(
     csrf=False,
     docs_url="/docs",
     title="Library API",
-    docs_decorator=superuser_required,  
+    docs_decorator=superuser_required,
     urls_namespace="api"
 )
 
+
 api.add_router("/library/", BookRouter, tags=["Books & Borrowing"])
+api.add_router("/auth/", AuthRouter, tags=["Security"])
